@@ -53,7 +53,7 @@ https://github.com/jjonline/calendar.js/blob/master/calendar.js
 lunarInfo:[0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,//1900-1909
 ...
 
-二、 1900-2100各年的24?气日期速查表
+二、1900-2100各年的24?气日期速查表
 sTermInfo:['9778397bd097c36b0b6fc9274c91aa','97b6b97bd19801ec9210c965cc920e','97bcf97c3598082c95f8c965cc920f',
 ...
 
