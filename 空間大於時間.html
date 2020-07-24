@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+	
+	<style>
+		
+	</style>
+	
+    <script>
+		let y1900 = [	'5B,0,0,C,01,1,0,6,20', '5B,4,0,1,2,0,2,4,19', '60,0,0,2,1,1,4,6,21', '60,0,0,3,2,0,6,5,20',
+						'60,0,0,4,3,0,8,6,21', '60,0,0,5,5,1,10,6,22', '60,0,0,6,5,0,12,7,23', '60,0,0,7,7,1,14,8,23',
+						'60,0,0,8,8,1,16,8,23', '60,0,8,8,8,1,18,9,24', '60,0,0,9,9,0,20,8,23', '60,0,0,A,10,1,22,7,22'];
+		
+		
+		let y = [y1900];
+		
+		window.onload = _ => {
+			addDateFunction();
+			for(let i=1; i<=31; i++) {
+				let d = new Date(1900, 10 - 1, i);
+				console.log(d.getLunarYear(), d.getLunarMonth(), d.getLunarDay(), d.getTerm24());
+			}
+		}
+		
+		let getLunarInfo = (solarArray) => {
+			const arr = solarArray.split(',');
+			return {
+				'sky':Number(arr[0].substring(0, 1)), // 天干 0~9
+				'land':parseInt(arr[0].substring(1), 16), // 地支(16進制) 0~B
+				'spring':Number(arr[1]), // 立春對應的陽曆日期 00~31
+				'leap':parseInt(arr[2], 16), // 閏幾月(16進制) 0~A，但沒有1，因為閏月沒有 1 11 12；0為非閏月
+				'lunarMonth':parseInt(arr[3], 16), // 陰曆月(16進制) 1~C
+				'start':Number(arr[4]), // 陰曆開始日期對應陽曆的1號 01~30
+				'end':arr[5] == 0 ? 29 : 30, // 陰曆月有幾天：0為29天；1為30天
+				'term24Num1':Number(arr[6]), // 第一個24節氣數字 00~23 小寒~冬至
+				'term24Day1':Number(arr[7]), // 第一個24節氣對應的陽曆日期 01~31
+				'term24Day2':Number(arr[8]) // 第二個24節氣對應的陽曆日期 01~31
+			};
+		}
+		
+		let addDateFunction = () => {
+			Date.prototype.getLunarMonthDetail = function() {
+				if(this.getFullYear() < 1900 || this.getFullYear() > 2100) return null;
+				return getLunarInfo(y[this.getFullYear() - 1900][this.getMonth()]);
+			};
+			
+			Date.prototype.getLunarYear = function() {
+				if(this.getFullYear() < 1900 || this.getFullYear() > 2100) return null;
+				const sky10 = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];	
+				const land12 = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+				const info = getLunarInfo(y[this.getFullYear() - 1900][this.getMonth()]);
+				if(this.getDate() == info.spring) return sky10[info.sky + 1] + land12[info.land + 1];
+				return sky10[info.sky] + land12[info.land];
+			};
+			
+			Date.prototype.getLunarMonth = function() {
+				if(this.getFullYear() < 1900 || this.getFullYear() > 2100) return null;
+				const info = getLunarInfo(y[this.getFullYear() - 1900][this.getMonth()]);
+				const endSolarDay = info.end - info.start + 1; // 陰曆月的最後一天對應陽曆的日期
+				if(this.getDate() <= endSolarDay) {
+					if(info.leap == 0) return info.lunarMonth;
+					else return '潤' + info.lunarMonth;
+				}
+
+				let nextMonth = getLunarInfo(y[this.getFullYear() - 1900][this.getMonth() + 1]);
+				if(nextMonth.leap == 0) return info.lunarMonth + 1
+				else return '潤' + info.lunarMonth;
+			};
+			
+			Date.prototype.getLunarDay = function() {
+				if(this.getFullYear() < 1900 || this.getFullYear() > 2100) return null;
+				const info = getLunarInfo(y[this.getFullYear() - 1900][this.getMonth()]);
+				let rtn = this.getDate() + info.start - 1;
+				if(rtn > info.end) rtn -= info.end;
+				return rtn;
+			};
+			
+			Date.prototype.getTerm24 = function() {
+				if(this.getFullYear() < 1900 || this.getFullYear() > 2100) return null;
+				const solarTerm24 = [ 	'小寒', '大寒', '立春', '雨水', '驚蟄', '春分',
+										'清明', '穀雨', '立夏', '小滿', '芒種', '夏至',
+										'小暑', '大暑', '立秋', '處暑', '白露', '秋分',
+										'寒露', '霜降', '立冬', '小雪', '大雪', '冬至'];
+				const info = getLunarInfo(y[this.getFullYear() - 1900][this.getMonth()]);
+				if(info.term24Day1 == this.getDate()) return solarTerm24[info.term24Num1];
+				if(info.term24Day2 == this.getDate()) return solarTerm24[info.term24Num1 + 1];
+				return '';
+			};
+		}
+    </script>
+</head>
+<body>
+</body>
+</html>
