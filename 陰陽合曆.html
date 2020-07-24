@@ -1,0 +1,68 @@
+<html>
+<head>
+	<script>
+		window.onload = _ => {
+			// 此公式只適用 1900~2100
+			// 查24節氣在1900年後的第幾天
+			// year:想查的年份
+			// solarTerm:第幾個節氣或中氣，從0開始。 偶數為節氣；奇數為中氣，農曆月沒中氣就是閏月(11 12 1不能閏)
+			let getSolarTerm24DaysOf1900 = (year, solarTerm) => {
+				return Math.floor(
+					365.242 * (year-1900) + 6.2 + 15.22 * solarTerm - 1.9 * Math.sin(0.262 * solarTerm)
+				);
+			}
+			
+			// 此公式只適用 1900~2100
+			// 查初一的起始日期在陽曆幾月幾號
+			// n:起始日，從0開始，第幾個初一的意思
+			let getDay = (n) => {
+				return Math.floor(1.6 + 29.5306 * n + 0.4 * Math.sin(1 - 0.45058 * n));
+			}
+			
+			// 閏年操作
+			let getDaysOfMonth = (year, month) => {
+				if(isLeaf(year) && month == 1)
+					return daysOfYear[month] + 1;
+				else
+					return daysOfYear[month];
+			}
+			
+			// 將天數轉換成日期(從1900年1月0日開始)
+			let calcYmd = (d) => {
+				let y = 1900;
+				let m = 0;
+
+				while(d > getDaysOfMonth(y, m)) {
+					d -= getDaysOfMonth(y, m);
+					m = (m + 1) % 12;
+					if(m == 0) {
+						y++;
+					}
+				}
+				
+				return y + ',' + ++m + ',' + d;
+			}
+			
+			let isLeaf = (year) => {
+				return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+			}
+							
+			let daysOfYear = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+			// 測試代碼
+			for(let i=0; i<=1800; i++) {
+				// 測試節氣或中氣的日期
+				//let d = getSolarTerm24DaysOf1900(i, 2);
+				//console.log(calcYmd(d));
+				
+				// 測試初一的日期
+				let d = getDay(i);
+				console.log(calcYmd(d));
+			}
+	
+		}
+	</script>
+</head>
+<body>
+</body>
+</html>

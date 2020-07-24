@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>輪班程式</title>
+	
+	<style>
+		td {
+			font-size: 25px;
+			text-align: center;
+			vertical-align: middle;
+		}
+		
+		.holiday {
+			color: red;
+		}
+		
+		.header {
+			font-weight: bold;
+			font-size: 30px;
+		}
+		
+		select, input {
+			width: 140px;
+			height:50px;
+			font-size: 30px;
+		}
+		
+		span {
+			font-size: 30px;
+		}
+		
+		input[type='checkbox'] {
+			width: 30px;
+			height:20px;
+			font-size: 30px;
+			margin: 0px;
+		}
+	</style>
+	
+    <script>
+		window.onload = _ => {
+			let date = new Date();
+			let m = date.getMonth() + 1;
+			if(m < 10) m = '0' + m;
+			
+			let dateString = date.getFullYear() + "-" + m;
+			document.getElementsByName("queryDateString")[0].value = dateString;
+			start();
+		}
+
+		let solarFestival = (monthHuman, m, tr) => {
+			if (monthHuman == 1 && m.getDate() == 1) { tr.insertCell().innerHTML = "開國紀念日";
+			} else if(monthHuman == 2 && m.getDate() == 28) { tr.insertCell().innerHTML = "和平紀念日";
+			} else if(monthHuman == 3 && m.getDate() == 29) { tr.insertCell().innerHTML = "青年節";
+			} else if(monthHuman == 4 && m.getDate() == 4) { tr.insertCell().innerHTML = "婦幼節";
+			} else if(monthHuman == 4 && m.getDate() == 5) { tr.insertCell().innerHTML = "掃墓節";
+			} else if(monthHuman == 5 && m.getDate() == 1) { tr.insertCell().innerHTML = "勞動節";
+			} else if(monthHuman == 5 && m.getDay() == 0) {
+				if(m.getDate() >=8 && m.getDate() <= 14 ) tr.insertCell().innerHTML = "母親節";
+				else tr.insertCell();
+			} else if(monthHuman == 8 && m.getDate() == 8) { tr.insertCell().innerHTML = "父親節";
+			} else if(monthHuman == 9 && m.getDate() == 3) { tr.insertCell().innerHTML = "軍人節";
+			} else if(monthHuman == 9 && m.getDate() == 28) { tr.insertCell().innerHTML = "教師節";
+			} else if(monthHuman == 10 && m.getDate() == 10) { tr.insertCell().innerHTML = "國慶日";
+			} else if(monthHuman == 10 && m.getDate() == 25) { tr.insertCell().innerHTML = "光復節";
+			} else if(monthHuman == 10 && m.getDate() == 31) { tr.insertCell().innerHTML = "蔣公誕辰紀念日";
+			} else if(monthHuman == 11 && m.getDate() == 12) { tr.insertCell().innerHTML = "國父誕辰紀念日";
+			} else if(monthHuman == 12 && m.getDate() == 25) { tr.insertCell().innerHTML = "行憲紀念日";
+			}
+			if(lunarFest) lunarFestival(tr);
+			if(typeof(tr.cells[6]) == 'undefined') tr.insertCell();
+		}
+		
+		let lunarFestival = (tr) => {
+			let lunarMdTxt = tr.children[1].innerHTML.split(' ')[1];
+			if(lunarMdTxt.indexOf('閏') == -1) {
+				let monthTxt = lunarMdTxt.indexOf('月');
+				let monthNum = lunarMdTxt.substring(0, monthTxt);
+				let dayNum = lunarMdTxt.substring(Number(monthTxt) + 1, lunarMdTxt.indexOf('日'));
+
+				if (monthNum == 1 && dayNum == 1) getContent(tr, '農曆新年');
+				if (monthNum == 1 && dayNum == 15) getContent(tr, '元宵節');
+				if (monthNum == 5 && dayNum == 5) getContent(tr, '端午節');
+				if (monthNum == 7 && dayNum == 7) getContent(tr, '七夕');
+				if (monthNum == 7 && dayNum == 15) getContent(tr, '中元節');
+				if (monthNum == 8 && dayNum == 15) getContent(tr, '中秋節');
+				if (monthNum == 9 && dayNum == 9) getContent(tr, '重陽節');
+				if (monthNum == 12 && dayNum == lunarInfo.endDay) getContent(tr, '除夕');
+			}
+		}
+		
+		let getContent = (tr, name) => {
+			if(typeof(tr.cells[6]) == 'undefined') {
+				tr.insertCell().innerHTML = name;
+			} else {
+				if(tr.cells[6].innerHTML.length == 0) tr.cells[6].innerHTML += name;
+				else tr.cells[6].innerHTML += '；' + name;
+			}
+		}
+	
+		let lunarFest = true;
+        function query() {
+            const compareDate = new Date(2019, 11 - 1, 10); // 基於此日期判斷，月為 0-11
+			const shiftName = document.getElementsByName("shiftName")[0].value;
+			const shift = shiftName.split(",");
+
+			let queryDateString = document.getElementsByName("queryDateString")[0].value.split("-");
+			let queryDateMonth = new Date(queryDateString[0], Number(queryDateString[1]) - 1, 1);
+			const day = 86400000; // 一天
+            let days = Math.round((queryDateMonth - compareDate) / day); // 相差天數
+			let month = queryDateMonth.getMonth();
+			
+			// A班1號的班
+			let aShiftNum = days % shift.length;
+			let count = 0;
+			
+			let shiftTable = document.getElementById("shiftTable");
+			if(shiftTable != null) {
+				document.getElementById("tab").removeChild(shiftTable);
+			}
+			
+			const table = document.createElement("table");
+			table.setAttribute('border', '1');
+			table.setAttribute('width', '100%');
+			table.setAttribute('id', 'shiftTable');
+			
+			let th = table.insertRow();
+			th.setAttribute('id', 'thHeader');
+			let solarCalendar = th.insertCell();
+			solarCalendar.setAttribute('width', '250px');
+			solarCalendar.setAttribute('class', 'header');
+			solarCalendar.innerHTML = "陽曆日期";
+			
+			let luniSolarCalendar = th.insertCell();
+			luniSolarCalendar.setAttribute('width', '300px');
+			luniSolarCalendar.setAttribute('class', 'header');
+			luniSolarCalendar.innerHTML = "農曆日期";
+			
+			let a = th.insertCell();
+			a.setAttribute('class', 'header');
+			a.setAttribute('width', '110px');
+			a.setAttribute('class', 'shift');
+			a.innerHTML = "A";
+			
+			let b = th.insertCell();
+			b.setAttribute('class', 'header');
+			b.setAttribute('width', '110px');
+			b.setAttribute('class', 'shift');
+			b.innerHTML = "B";
+			
+			let c = th.insertCell();
+			c.setAttribute('class', 'header');
+			c.setAttribute('width', '110px');
+			c.setAttribute('class', 'shift');
+			c.innerHTML = "C";
+			
+			let d = th.insertCell();
+			d.setAttribute('class', 'header');
+			d.setAttribute('width', '110px');
+			d.setAttribute('class', 'shift');
+			d.innerHTML = "D";
+			
+			let e = th.insertCell();
+			e.setAttribute('class', 'header');
+			e.setAttribute('class', 'festival');
+			e.setAttribute('width', '250px');
+			e.innerHTML = "節日";
+			
+			while (true) {
+				let m = new Date(Number(queryDateMonth) + day * count)
+				if (month == m.getMonth()) {
+					let monthHuman = (Number(month) + 1);
+					let solarYmdw = m.getFullYear() + "年" + monthHuman + "月" + addSpace(m.getDate()) + "日(" + getWeek(m.getDay()) + ")";
+					let tr = table.insertRow();
+					if (m.getDay() == 0 || m.getDay() == 6) {
+						tr.setAttribute('class', 'holiday');
+					}
+					
+					tr.insertCell().innerHTML = solarYmdw;
+					let ld = document.querySelectorAll('.lunarDisplay');
+					if(m.getFullYear() >= 1900 && m.getFullYear() <= 2100){
+						let lunar = tr.insertCell();
+						lunar.setAttribute('class', 'lunar');
+						lunar.innerHTML = displayLunar(count, queryDateString);
+						lunarFest = true;
+						for(let d of ld) d.style.display = 'inline';
+					} else {
+						lunarFest = false;
+						for(let d of ld) d.style.display = 'none';
+						tr.insertCell().innerHTML = '只支援 1900~2100';
+					}
+					
+					let shiftNum = (aShiftNum + count) % shift.length;
+					let aCell = tr.insertCell();
+					aCell.setAttribute('class', 'shift');
+					aCell.innerHTML = (shiftNum >= 0 ? shift[shiftNum] : shift[shiftNum + shift.length]);
+
+					let bShiftNum = (aShiftNum - 6 + count) % shift.length;
+					let bCell = tr.insertCell();
+					bCell.setAttribute('class', 'shift');
+					bCell.innerHTML = (bShiftNum >= 0 ? shift[bShiftNum] : shift[bShiftNum + shift.length]);
+					
+					let cShiftNum = (aShiftNum - 9 + count) % shift.length;
+					let cCell = tr.insertCell();
+					cCell.setAttribute('class', 'shift');
+					cCell.innerHTML = (cShiftNum >= 0 ? shift[cShiftNum] : shift[cShiftNum + shift.length]);
+					
+					let dShiftNum = (aShiftNum - 3 + count) % shift.length;
+					let dCell = tr.insertCell();
+					dCell.setAttribute('class', 'shift');
+					dCell.innerHTML = (dShiftNum >= 0 ? shift[dShiftNum] : shift[dShiftNum + shift.length]);
+					
+					solarFestival(monthHuman, m, tr);
+					count = count + 1;
+				} else {
+					break;
+				}
+			}
+			document.getElementById("tab").appendChild(table);
+			changeColor();
+			hideShift();
+			lunarDisplayFormat();
+		}
+		
+		function addSpace(num) {
+			return num.toString().length == 1 ? "0" + num : num; 
+		}
+		
+		
+		function getWeek(day){
+			const dayArray= ["日", "一", "二", "三", "四", "五", "六"];
+			return dayArray[day];
+		}
+		
+		function page(num) {
+			let queryDateString = document.getElementsByName("queryDateString")[0].value.split("-");
+			if (queryDateString != "") {
+				let result = "";
+				let month = addSpace(Number(queryDateString[1]) + num);
+				if (month == 13) {
+					result = Number(queryDateString[0]) + 1 + "-01"
+				}
+				
+				if (month == 0) {
+					result = Number(queryDateString[0]) - 1 + "-12"
+				}
+				
+				if (result == "") {
+					result = queryDateString[0] + "-" + month;
+				}
+				document.getElementsByName("queryDateString")[0].value = result;
+				start();
+			}
+		}
+		
+		function changeColor() {
+			let trs = document.getElementsByTagName("tr");
+			trs[0].style.backgroundColor = "lightyellow";
+            for (let i=1; i < trs.length; i++) {
+                if ((i & 1) == 0) {
+                    trs[i].style.backgroundColor = "lightblue";
+                } else {
+					trs[i].style.backgroundColor = "lightgreen";
+				}
+				trs[i].onmouseover = function() {
+					this.style.backgroundColor = 'rgb(128,128,0)';
+				};
+				trs[i].onmouseout = function() {
+					if ((i & 1) == 0) this.style.backgroundColor = 'lightblue';
+					else this.style.backgroundColor = 'lightgreen';
+				};
+            }
+		}
+		
+		// 此公式只適用 1900~2100
+		// 查24節氣在1900年後的第幾天
+		// year:想查的年份
+		// solarTerm:第幾個節氣或中氣，從0開始。 偶數為節氣；奇數為中氣，農曆月沒中氣就是閏月
+		let getSolarTerm24DaysOf1900 = (year, solarTerm) => {
+			return Math.floor(
+				365.242 * (year-1900) + 6.2 + 15.22 * solarTerm - 1.9 * Math.sin(0.262 * solarTerm)
+			);
+		}
+		
+		// 此公式只適用 1900~2100
+		// 查初一的起始日期在陽曆幾月幾號
+		// n:起始日，從0開始，第幾個初一的意思
+		let getDay = (n) => {
+			return Math.floor(1.6 + 29.5306 * n + 0.4 * Math.sin(1 - 0.45058 * n));
+		}
+		
+		// 閏年操作
+		let getDaysOfMonth = (year, month) => {
+			if(isLeaf(year) && month == 1) return daysOfYear[month] + 1;
+			else return daysOfYear[month];
+		}
+		
+		// 將天數轉換成日期(從1900年1月0日開始)
+		let calcYmd = (d) => {
+			let y = 1900;
+			let m = 0;
+
+			while(d > getDaysOfMonth(y, m)) {
+				d -= getDaysOfMonth(y, m);
+				m = (m + 1) % 12;
+				if(m == 0) y++;
+			}
+			return y + ',' + ++m + ',' + d;
+		}
+		
+		let isLeaf = (year) => {
+			return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+		}
+						
+		let daysOfYear = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+		
+		// 國曆一月的第一個節氣一定為小寒
+		let solarTerm24 = [ '小寒', '大寒', '立春', '雨水', '驚蟄', '春分',
+							'清明', '穀雨', '立夏', '小滿', '芒種', '夏至',
+							'小暑', '大暑', '立秋', '處暑', '白露', '秋分',
+							'寒露', '霜降', '立冬', '小雪', '大雪', '冬至'];		
+		let sky10 = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];	
+		let land12 = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+		let lunarDayNum = ['初', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '廿', '卅'];
+		let lunarMonthNum = ['正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '冬', '臘'];
+
+		let lunarOperation = _ => {
+			let queryDateString = document.getElementsByName("queryDateString")[0].value.split("-");
+			let year = Number(queryDateString[0]);
+			let month = Number(queryDateString[1]);
+			
+			// 天干地支，一開始的前一個月是去年農曆12月
+			let sky = 5; // 己 0~9
+			let land = 11; // 亥 0~11
+			let springYear = ''; // 立春標記
+			
+			let lunarMonth = -2; // 0~11 農曆月
+			let leapMD = '';
+			
+			let finalLastDays = ''; // 初一之後的上個農曆月
+			let lastOne = ''; // 上一個初一的日期
+			let lastDays = 0; // 上一個初一的天數
+			let lastMonthDay = 0; // 上個月有幾天
+			
+			let finalLoop = false;
+			for(let i=0; ; i++) { // 每次一個農曆月
+				// 初一日期
+				let d = getDay(i);
+				let thisOne = calcYmd(d);
+				let ymd = thisOne.split(',');
+
+				let thisDay = Number(ymd[2]);
+				let tempDay = 0;
+				let tempMonth = 0;
+
+				if(i-1 >= 0) { // 1900 的第一個初一是去年農曆12月的
+					let lastYmd;
+					if(!finalLoop) {
+						lastMonthDay = d - lastDays;
+						lunarMonth++;
+						lastYmd = lastOne.split(',');
+					} else {
+						lastYmd = finalLastDays.split(',');
+					}
+					
+					if(lastYmd[1] != 1 && lastYmd[1] < 11) { // 1 11 12 不可能有閏月
+						for(let i=1; i<25; i=i+2) {
+							// 中氣的日期
+							let d = getSolarTerm24DaysOf1900(lastYmd[0], i);
+							let c1 = calcYmd(d);
+							let center1Ymd = c1.split(',');
+
+							if(center1Ymd[1] == lastYmd[1]) { // 上個月初一的中氣和上個月比較
+								let c2 = calcYmd(getSolarTerm24DaysOf1900(lastYmd[0], i + 2));
+								let center2Ymd = c2.split(',');
+								
+								let sDate = new Date(lastYmd[0], Number(lastYmd[1]) - 1, lastYmd[2]).getTime();
+								let cDate1 = new Date(center1Ymd[0], Number(center1Ymd[1]) - 1, center1Ymd[2]).getTime();
+								let cDate2 = new Date(center2Ymd[0], Number(center2Ymd[1]) - 1, center2Ymd[2]).getTime();
+								let eDate = new Date(ymd[0], Number(ymd[1]) - 1, Number(ymd[2]) - 1).getTime();				
+								
+								if(!((sDate <= cDate1 && cDate1 <= eDate) || (sDate <= cDate2 && cDate2 <= eDate))) {
+									// 閏月
+									if(!finalLoop){
+										lunarMonth--;
+										lunarInfo.leaf = true;
+									} else {
+										lunarInfo.oneAfterLeaf = true;
+									}
+								} else {
+									if(!finalLoop) lunarInfo.leaf = false;
+									else lunarInfo.oneAfterLeaf = false;
+								}
+								break;
+							}
+						}
+					}
+					
+					// 農曆年，農曆年是看立春的
+					let springDate = calcYmd(getSolarTerm24DaysOf1900(lastYmd[0], 2));
+					let springYmd = springDate.split(',');
+					let ssdTime = new Date(springYmd[0], Number(springYmd[1]) - 1, springYmd[2]).getTime();
+					let lastOneTime = new Date(lastYmd[0], Number(lastYmd[1]) - 1, lastYmd[2]).getTime();
+						
+					if(springYear != lastYmd[0] && lastOneTime > ssdTime) {
+						if(!finalLoop){
+							springYear = lastYmd[0];
+							sky++;
+							land++;
+							lunarInfo.springDate = springDate;
+						} else {
+							lunarInfo.nextSpringDate = springDate;
+						}
+					}
+				}
+
+				if(finalLoop) break;
+				let oneNow = new Date(ymd[0], Number(ymd[1]) - 1, ymd[2]).getTime();
+				let nowMonth = new Date(year, month - 1, 1).getTime();
+				if(oneNow > nowMonth) {
+					finalLoop = true;
+					finalLastDays = thisOne;
+					continue;
+				}
+				lastOne = thisOne;
+				lastDays = d;
+			}
+
+			let lastYmd2 = lastOne.split(',');
+			let lastOneTime = new Date(lastYmd2[0], Number(lastYmd2[1]) - 1, lastYmd2[2]).getTime();
+			let nowMonthTime = new Date(year, month - 1, 1).getTime();
+			let lunarStartDay = Math.round((nowMonthTime - lastOneTime) / 86400000 + 1); // 四捨五入解決日光節約日的誤差
+			
+			lunarInfo.startDay = lunarStartDay;
+			lunarInfo.endDay = lastMonthDay;
+			lunarInfo.month = lastOne == '1900,1,1' ? 11: lunarMonth % 12;
+			lunarInfo.yearSky = sky%10;
+			lunarInfo.yearLand = land%12;
+		}
+		
+		let displayLunar = (c, solarYm) => {
+			let leaf = '';
+			if(lunarInfo.leaf){
+				leaf = '閏';
+			}
+			let month = lunarInfo.month;
+			
+			let days = c + lunarInfo.startDay;
+			if(days >= lunarInfo.endDay + 1){
+				// 下個初一也有可能是閏月
+				if(lunarInfo.oneAfterLeaf) {
+					leaf = '閏';
+				} else {
+					leaf = '';
+					month++;
+					if(month == 12) month = 0;
+				}
+				days -= lunarInfo.endDay;
+			}
+			
+			// 天干地支(年)
+			let tempSky = lunarInfo.yearSky;
+			let tempLand = lunarInfo.yearLand;
+			let sd = lunarInfo.nextSpringDate.split(',');
+			if(solarYm[1].substring(0, 1) == '0') solarYm[1] = solarYm[1].substring(1);
+			if(solarYm[0] == sd[0] && solarYm[1] == sd[1] && c + 1 >= sd[2]){
+				++tempSky;
+				++tempLand;
+				if(tempSky == 10) tempSky = tempSky - 10;
+				if(tempLand == 12) tempLand = tempLand - 12;
+			}
+			let year = sky10[tempSky] + land12[tempLand];
+			
+			// 24 節氣
+			let term24 = '';
+			for(let i=0; i<=25; i++) {
+				let tymd = calcYmd(getSolarTerm24DaysOf1900(solarYm[0], i)).split(',');
+				if(solarYm[0] == tymd[0] && solarYm[1] == tymd[1] && c + 1 == tymd[2]){
+					term24 += ' (' + solarTerm24[i] + ')';
+					break;
+				}
+			}
+			return year + '年 ' + leaf + (month + 1) + '月' + days + '日' + term24;
+		}
+		
+		let lunarInfo = {};
+		let start = _ => {
+			let content = document.getElementsByName('queryDateString')[0].value;
+			if(content.indexOf('-') == -1 && (content.length != 6 || content.length != 7)) {
+				alert('請輸入正確格式(yyyy-MM)');
+				return;
+			}
+			lunarInfo.startDay = 0; // 陽曆1號為初幾
+			lunarInfo.endDay = 0; // 農曆日的天數
+			lunarInfo.nextEndDay = 0; // 最後的農曆天數
+			lunarInfo.leaf = false; // 閏月嗎
+			lunarInfo.oneAfterLeaf = false; // 初一之後是閏月嗎
+			lunarInfo.month = 0; // 農曆月
+			lunarInfo.yearSky = 0; // 農曆年的天干
+			lunarInfo.yearLand = 0; // 農曆年的地支
+			lunarInfo.springDate = '1900,2,4'; // 1900 的陽曆立春日期
+			lunarInfo.nextSpringDate = ''; // 下一年的立春日期
+
+			lunarOperation();
+			query();
+		}
+		
+		let hideShift = _ => {
+			let shifts = document.querySelectorAll('.shift');
+			let shift2 = document.querySelectorAll('.shift2');
+			if(document.getElementById('hideShift').checked){
+				for(let s of shifts) s.style.display = 'none';
+				for(let s of shift2) s.style.visibility = 'hidden';
+			} else {
+				for(let s of shifts) s.style.display = 'table-cell';
+				for(let s of shift2) s.style.visibility = 'visible';
+			}
+		}
+		
+		let displayChinese = (tds) => {
+			for(let td of tds) {
+				let lunarYmd = splitLunarYmd(td);
+				let month = lunarMonthNum[Number(lunarYmd.monthNum) - 1];
+				let day = '';
+				if(lunarYmd.days <= 10){ day = lunarDayNum[0] + lunarDayNum[lunarYmd.days];
+				} else if(lunarYmd.days <= 19){ day = lunarDayNum[10] + lunarDayNum[(lunarYmd.days + '').substring(1)];
+				} else if(lunarYmd.days == 20){ day = lunarDayNum[11] + lunarDayNum[10];
+				} else if(lunarYmd.days <= 29){ day = lunarDayNum[11] + lunarDayNum[(lunarYmd.days + '').substring(1)];
+				} else if(lunarYmd.days == 30){ day = lunarDayNum[12] + lunarDayNum[10];
+				}
+				if(typeof(lunarYmd.allTxt[2]) == 'undefined') lunarYmd.allTxt[2] = '';
+				td.innerHTML = lunarYmd.allTxt[0] + ' ' + lunarYmd.leaf + month + '月' + day + '日 ' + lunarYmd.allTxt[2];
+			}
+		}
+		
+		let lunarDisplayFormat = _ => {
+			let self = document.getElementById('lunarDisplayFormat');
+			let tds = document.querySelectorAll('.lunar');
+			
+			if(self.checked){
+				displayChinese(tds);
+			} else {
+				for(let td of tds) {
+					let lunarYmd = splitLunarYmd(td);
+					let mn = lunarMonthNum.indexOf(lunarYmd.monthNum) + 1;
+					if(mn == 0) {
+						displayChinese(tds);
+						lunarYmd = splitLunarYmd(td);
+						mn = lunarMonthNum.indexOf(lunarYmd.monthNum) + 1;
+					}
+					let left = lunarDayNum.indexOf(lunarYmd.days.substring(0, 1));
+					let right = lunarDayNum.indexOf(lunarYmd.days.substring(1));
+					
+					let dn = '';
+					if(left == 0) { dn = right;
+					} else if(left == 10) { dn = '1' + right;
+					} else if(left == 11) {
+						if(right == 10) right = 0;
+						dn = '2' + right;
+					} else if(left == 12) { dn = 30;
+					}				
+					if(typeof(lunarYmd.allTxt[2]) == 'undefined') lunarYmd.allTxt[2] = '';
+					td.innerHTML = lunarYmd.allTxt[0] + ' ' + lunarYmd.leaf + mn + '月' + dn + '日 ' + lunarYmd.allTxt[2];
+				}
+			}
+		}
+		
+		let splitLunarYmd = (td) => {
+			let allTxt = td.innerHTML.split(' ');
+			let lunarMdTxt = allTxt[1];
+			let leaf = '';
+			if(lunarMdTxt.indexOf('閏') == 0) {
+				leaf = '閏';
+				lunarMdTxt = lunarMdTxt.substring(1);
+			}
+
+			let monthTxt = lunarMdTxt.indexOf('月');
+			let monthNum = lunarMdTxt.substring(0, monthTxt);
+			let days = lunarMdTxt.substring(Number(monthTxt) + 1, lunarMdTxt.indexOf('日'));
+			return {'allTxt':allTxt, 'leaf':leaf, 'monthNum':monthNum, 'days':days};
+		}
+    </script>
+</head>
+<body>
+<input name="queryDateString" size="10" placeholder="yyyy-MM" maxlength="7" onchange="start();"/>
+<input type="button" value="--" onclick="page(-1)"/>
+<input type="button" value="++" onclick="page(1)"/>
+
+<span>&nbsp;&nbsp;</span>
+<input class="lunarDisplay" type="checkbox" id="lunarDisplayFormat" onclick="lunarDisplayFormat()" checked='checked' />
+<span class="lunarDisplay">農曆顯示中文</span>
+
+<span>&nbsp;&nbsp;</span>
+<input type="checkbox" id="hideShift" onclick="hideShift()" />
+<span>隱藏班表</span>
+<span class="shift2">&nbsp;&nbsp;班表顯示格式：</span>
+<select class="shift2" name=shiftName onchange="start();">
+	<option value="三值-1,三值-2,三值-3,小空班,二值-1,二值-2,二值-3,一值-1,一值-2,一值-3,空班-1,空班-2">中文</option>
+	<option value="3,3,3,0,2,2,2,1,1,1,0,0" selected="selected">數字</option>
+</select><br/>
+<br/>
+<dir id="tab"></dir>
+</body>
+</html>
