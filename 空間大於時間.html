@@ -9,59 +9,37 @@
 	</style>
 	
     <script>
-		let y1900 = [	'5B,0,0,C,01,1,0,0,6,20', 
-						'5B,4,0,1,2,0,1,2,4,19', 
-						'60,0,0,2,1,1,0,4,6,21', 
-						'60,0,0,3,2,0,0,6,5,20',
-						'60,0,0,4,3,0,1,8,6,21', 
-						'60,0,0,5,5,1,0,10,6,22', 
-						'60,0,0,6,5,0,1,12,7,23', 
-						'60,0,0,7,7,1,1,14,8,23',
-						'60,0,0,8,8,1,1,16,8,23', 
-						'60,0,8,8,8,1,0,18,9,24', 
-						'60,0,0,9,9,0,1,20,8,23', 
-						'60,0,0,A,10,1,0,22,7,22'];
-						
-		let y1901 = [	'60,0,0,B,11,0,1,0,6,21', 
-						'60,4,0,C,13,1,0,2,4,19', 
-						'71,0,0,1,11,0,1,4,6,21', 
-						'71,0,0,2,13,1,0,6,5,21',
-						'71,0,0,3,13,0,0,8,6,22', 
-						'71,0,0,4,15,0,1,10,6,22', 
-						'71,0,0,5,16,1,0,12,8,23', 
-						'71,0,0,6,17,0,1,14,8,24',
-						'71,0,0,7,19,1,1,16,8,24', 
-						'71,0,0,8,19,1,0,18,9,24', 
-						'71,0,0,9,20,0,1,20,8,23', 
-						'71,0,0,A,21,1,1,22,8,22'];
-						
-		let y1902 = [	'71,0,0,B,22,1,0,0,6,21', 
-						'71,5,0,C,23,0,1,2,5,19', 
-						'82,0,0,1,22,1,0,4,6,21', 
-						'82,0,0,2,23,0,1,6,6,21',
-						'82,0,0,3,24,1,0,8,6,22', 
-						'82,0,0,4,25,0,0,10,6,22', 
-						'82,0,0,5,26,0,1,12,8,24', 
-						'82,0,0,6,28,1,0,14,8,24',
-						'82,0,0,7,29,0,1,16,8,24', 
-						'82,0,0,8,30,1,0,18,9,24', 
-						'82,0,0,A,2,1,1,20,8,23', 
-						'82,0,0,B,2,1,0,22,8,23'];
-		let y1903 = [];
-		let y1904 = [];
-		let y1905 = [];
+		let y1901 = [	'60,0,0,B,11,0,1,6,21', '60,4,0,C,13,1,0,4,19', '71,0,0,1,11,0,1,6,21', '71,0,0,2,13,1,0,5,21',               
+						'71,0,0,3,13,0,0,6,22', '71,0,0,4,15,0,1,6,22', '71,0,0,5,16,1,0,8,23', '71,0,0,6,17,0,1,8,24',
+						'71,0,0,7,19,1,0,8,24', '71,0,0,8,19,0,1,9,24', '71,0,0,9,21,1,1,8,23', '71,0,0,A,21,1,1,8,22' ];
+
+		let y1902 = [	'71,0,0,B,22,1,0,6,21', '71,5,0,C,23,0,1,5,19', '82,0,0,1,22,1,0,6,21', '82,0,0,2,23,0,1,6,21',                 
+						'82,0,0,3,24,1,0,6,22', '82,0,0,4,25,0,0,7,22', '82,0,0,5,26,0,1,8,24', '82,0,0,6,28,1,0,8,24',                     
+						'82,0,0,7,29,0,1,8,24', '82,0,0,8,30,1,0,9,24', '82,0,0,A,2,1,1,8,23', '82,0,0,B,2,1,1,8,23' ];
+
+		let y1903 = [	'82,0,0,C,3,1,0,6,21', '82,5,0,1,4,0,1,5,20', '93,0,0,2,3,1,0,7,22', '93,0,0,3,4,0,1,6,21',
+						'93,0,0,4,5,1,0,7,22', '93,0,5,5,6,0,0,7,22', '93,0,0,5,7,0,1,8,24', '93,0,0,6,9,1,0,9,24',
+						'93,0,0,7,10,0,0,9,24', '93,0,0,8,11,0,1,9,24', '93,0,0,9,13,1,1,8,23', '93,0,0,A,13,1,0,8,23' ];
+
+		let y1904 = [	'93,0,0,B,14,0,1,7,21', '93,5,0,C,16,1,1,5,20', '04,0,0,1,15,1,1,6,21', '04,0,0,2,16,1,0,5,20',
+						'04,0,0,3,16,0,1,6,21', '04,0,0,4,18,1,0,6,22', '04,0,0,5,18,0,0,7,23', '04,0,0,6,20,0,1,8,23',
+						'04,0,0,7,22,1,0,8,23', '04,0,0,8,22,0,0,9,24', '04,0,0,9,24,0,1,8,23', '04,0,0,A,25,1,1,7,22' ];
+
+		let y1905 = [	'04,0,0,B,26,1,0,6,21', '04,4,0,C,27,0,1,4,19', '15,0,0,1,26,1,1,6,21', '15,0,0,2,27,1,0,5,21',
+						'15,0,0,3,27,0,1,6,22', '15,0,0,4,29,1,1,6,22', '15,0,0,5,29,1,0,8,23', '15,0,0,7,1,0,1,8,24',
+						'15,0,0,8,3,1,0,8,24', '15,0,0,9,3,0,1,9,24', '15,0,0,A,5,1,0,8,23', '15,0,0,B,5,0,1,8,22' ];
 		let y1906 = [];
 		let y1907 = [];
 		let y1908 = [];
 		let y1909 = [];
 		let y1910 = [];
 		
-		let y = [y1900, y1901, y1902, y1903, y1904, y1905, y1906, y1907, y1908, y1909, y1910];
+		let y = [y1901, y1902, y1903, y1904, y1905, y1906, y1907, y1908, y1909, y1910];
 		
 		window.onload = _ => {
 			addDateFunction(); // 擴充原本的 Date 功能
 			
-			for(let y=1902; y<=1902; y++) {
+			for(let y=1903; y<=1905; y++) {
 				for(let m=1; m<=12; m++) {
 					let kvar = 0;
 					if([4,6,9,11].includes(m)) kvar = 30;
@@ -97,32 +75,35 @@
 				'start':Number(arr[4]), // 陰曆開始日期對應陽曆的1號 1~30
 				'end':arr[5] == 0 ? 29 : 30, // 陰曆月有幾天：0為29天；1為30天
 				'nextEnd':arr[6] == 0 ? 29 : 30, // 下個陰曆月有幾天，一個陽曆月裡有三個陰曆月時會有用(1902/10)
-				'term24Num1':Number(arr[7]), // 第一個24節氣數字 0~23 小寒~冬至
-				'term24Day1':Number(arr[8]), // 第一個24節氣對應的陽曆日期 1~31
-				'term24Day2':Number(arr[9]) // 第二個24節氣對應的陽曆日期 1~31
+				'term24Day1':Number(arr[7]), // 第一個24節氣對應的陽曆日期 1~31
+				'term24Day2':Number(arr[8]) // 第二個24節氣對應的陽曆日期 1~31
 			};
 		}
 		
+		let getLunarJson = (year, month) => {
+			return getLunarInfo(y[year - 1901][month]);
+		}
+		
 		let addDateFunction = () => {
-			Date.prototype.getLunarMonthDetail = function() {
-				if(this.getFullYear() < 1900 || this.getFullYear() > 2100) return '';
-				return getLunarInfo(y[this.getFullYear() - 1900][this.getMonth()]);
-			};
+			/*Date.prototype.getLunarMonthDetail = function() {
+				if(this.getFullYear() < 1901 || this.getFullYear() > 2100) return '';
+				return getLunarInfo(y[this.getFullYear() - 1901][this.getMonth()]);
+			};*/
 			
 			Date.prototype.getLunarYear = function() {
-				if(this.getFullYear() < 1900 || this.getFullYear() > 2100) return '';
+				if(this.getFullYear() < 1901 || this.getFullYear() > 2100) return '';
 				const sky10 = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];	
 				const land12 = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
-				const info = getLunarInfo(y[this.getFullYear() - 1900][this.getMonth()]);//debugger;
+				const info = getLunarJson(this.getFullYear(), this.getMonth());
 				if(info.spring != 0 && this.getDate() >= info.spring) return sky10[(info.sky + 1) % 10] + land12[(info.land + 1) % 12];
 				return sky10[info.sky] + land12[info.land];
 			};
 			
 			Date.prototype.getLunarMonth = function() {
-				if(this.getFullYear() < 1900 || this.getFullYear() > 2100) return '';
-				const info = getLunarInfo(y[this.getFullYear() - 1900][this.getMonth()]);
+				if(this.getFullYear() < 1901 || this.getFullYear() > 2100) return '';
+				const info = getLunarJson(this.getFullYear(), this.getMonth());
 				if(info.start == info.end && this.getDate() == 31) { // 如果一個陽曆月有三個陰曆月時會用到
-					let next2Month = getLunarInfo(y[this.getFullYear() - 1900][(this.getMonth() + 2) % 12]);
+					const next2Month = getLunarJson(this.getFullYear(), (this.getMonth() + 2) % 12);
 					if(next2Month.leap == 0) return info.lunarMonth + 2;
 					else return '潤' + info.lunarMonth + 1;
 				}
@@ -134,7 +115,7 @@
 					else return '潤' + info.lunarMonth;
 				}
 				
-				let nextMonth = getLunarInfo(y[this.getFullYear() - 1900][(this.getMonth() + 1) % 12]);
+				const nextMonth = getLunarJson(this.getFullYear(), (this.getMonth() + 1) % 12);
 				if(nextMonth.leap == 0) {
 					let rtn = info.lunarMonth + 1;
 					if(rtn == 13) rtn = 1;
@@ -145,8 +126,8 @@
 			};
 			
 			Date.prototype.getLunarDay = function() {
-				if(this.getFullYear() < 1900 || this.getFullYear() > 2100) return '';
-				const info = getLunarInfo(y[this.getFullYear() - 1900][this.getMonth()]);
+				if(this.getFullYear() < 1901 || this.getFullYear() > 2100) return '';
+				const info = getLunarJson(this.getFullYear(), this.getMonth());
 				// 如果一個陽曆月有三個陰曆月時會用到
 				if(info.start == info.end && this.getDate() == 31) return 1; 
 				let rtn = this.getDate() + info.start - 1;
@@ -155,20 +136,20 @@
 			};
 			
 			Date.prototype.getTerm24 = function() {
-				if(this.getFullYear() < 1900 || this.getFullYear() > 2100) return '';
+				if(this.getFullYear() < 1901 || this.getFullYear() > 2100) return '';
 				const solarTerm24 = [ 	'小寒', '大寒', '立春', '雨水', '驚蟄', '春分',
 										'清明', '穀雨', '立夏', '小滿', '芒種', '夏至',
 										'小暑', '大暑', '立秋', '處暑', '白露', '秋分',
 										'寒露', '霜降', '立冬', '小雪', '大雪', '冬至'];
-				const info = getLunarInfo(y[this.getFullYear() - 1900][this.getMonth()]);
-				if(info.term24Day1 == this.getDate()) return solarTerm24[info.term24Num1];
-				if(info.term24Day2 == this.getDate()) return solarTerm24[info.term24Num1 + 1];
+				const info = getLunarJson(this.getFullYear(), this.getMonth());
+				if(info.term24Day1 == this.getDate()) return solarTerm24[this.getMonth() * 2];
+				if(info.term24Day2 == this.getDate()) return solarTerm24[this.getMonth() * 2 + 1];
 				return '';
 			};
 			
 			/*Date.prototype.isFinalDate = function() { // 除夕
-				if(this.getFullYear() < 1900 || this.getFullYear() > 2100) return '';
-				const info = getLunarInfo(y[this.getFullYear() - 1900][this.getMonth()]);
+				if(this.getFullYear() < 1901 || this.getFullYear() > 2100) return '';
+				const info = getLunarJson(this.getFullYear(), this.getMonth());
 				if(info.lunarMonth == 12) {
 					info.end
 				}

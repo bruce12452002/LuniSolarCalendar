@@ -39,7 +39,7 @@
 7.陽曆 1 月的第一個節氣是小寒
 8.農曆年看的是立春
 9.第 3 點因為沒有儀器可以觀察天文，但有人提供了兩個公式來算 24 節氣，和每月初一的日子，
-但只有 1900~2100 比較準(其實還是有誤差，因為進位問題而有可能導致差一天，尤其是閏月，差一天就是一個月)
+但只有 1900~2100 比較準(其實還是有誤差，因為進位問題而有可能導致差一天，尤其是閏月，差一天就是一個月，2033(含)之後有問題)
 10.這裡指的農曆是中國農曆，外蒙古不是這種算法，他們有時陰曆日期兩天一模一樣，叫重日
 
 公式一：
@@ -93,7 +93,9 @@ c9274 -> 9 10月 ...
 c91aa -> 11 12月 ...
 
 
-這種做法的好處是不用算了，提前先算好，直接拿來用就好了
+這種做法的好處是不用算了，提前先算好，直接拿來用就好了，而且也不會有誤差
 
 1900~2050 潤月和節氣表
 https://www-ws.gov.taipei/Download.ashx?u=LzAwMS9VcGxvYWQvNDM5L3JlbGZpbGUvNDc1NTcvNzk3MDY5OS9jMGZiN2JhMC1iNTU1LTQyNjctYWUwMi0zNzIyNTU3ZDhjMTgucGRm&n=6ZaP5pyI56%2BA5rCj6KGoLnBkZg%3D%3D&icon=..pdf
+1901~2100 的對照
+https://www.hko.gov.hk/tc/gts/time/conversion.htm

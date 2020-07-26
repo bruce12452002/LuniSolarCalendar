@@ -179,7 +179,7 @@
 					
 					tr.insertCell().innerHTML = solarYmdw;
 					let ld = document.querySelectorAll('.lunarDisplay');
-					if(m.getFullYear() >= 1900 && m.getFullYear() <= 2100){
+					if(m.getFullYear() >= 1900 && m.getFullYear() <= 2032){
 						let lunar = tr.insertCell();
 						lunar.setAttribute('class', 'lunar');
 						lunar.innerHTML = displayLunar(count, queryDateString);
@@ -188,7 +188,7 @@
 					} else {
 						lunarFest = false;
 						for(let d of ld) d.style.display = 'none';
-						tr.insertCell().innerHTML = '只支援 1900~2100';
+						tr.insertCell().innerHTML = '只支援 1900~2032';
 					}
 					
 					let shiftNum = (aShiftNum + count) % shift.length;
@@ -356,7 +356,6 @@
 					let lastYmd;
 					if(!finalLoop) {
 						lastMonthDay = d - lastDays;
-						//if(![0,10,11].includes(lunarMonth % 12)) 
 						lunarMonth++;
 						lastYmd = lastOne.split(',');
 					} else {
