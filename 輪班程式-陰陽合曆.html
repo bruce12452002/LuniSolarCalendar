@@ -360,6 +360,7 @@
 						lastYmd = lastOne.split(',');
 					} else {
 						lastYmd = finalLastDays.split(',');
+						lunarInfo.nextEndDay = d - lunarInfo.nextEndDay;
 					}
 					
 					if(lastYmd[1] != 1 && lastYmd[1] < 11) { // 1 11 12 不可能有閏月
@@ -396,19 +397,20 @@
 					}
 					
 					// 農曆年，農曆年是看立春的
-					let springDate = calcYmd(getSolarTerm24DaysOf1900(lastYmd[0], 2));
-					let springYmd = springDate.split(',');
-					let ssdTime = new Date(springYmd[0], Number(springYmd[1]) - 1, springYmd[2]).getTime();
-					let lastOneTime = new Date(lastYmd[0], Number(lastYmd[1]) - 1, lastYmd[2]).getTime();
-						
-					if(springYear != lastYmd[0] && lastOneTime > ssdTime) {
-						if(!finalLoop){
-							springYear = lastYmd[0];
-							sky++;
-							land++;
-							lunarInfo.springDate = springDate;
-						} else {
-							lunarInfo.nextSpringDate = springDate;
+					if(springYear != lastYmd[0]) {
+						let springDate = calcYmd(getSolarTerm24DaysOf1900(lastYmd[0], 2));
+						let springYmd = springDate.split(',');
+						let ssdTime = new Date(springYmd[0], Number(springYmd[1]) - 1).getTime();
+						let lastOneTime = new Date(lastYmd[0], Number(lastYmd[1]) - 1).getTime();
+
+						if(lastOneTime >= ssdTime) {
+							if(!finalLoop){
+								springYear = lastYmd[0];
+								sky++;
+								land++;
+							} else {
+								lunarInfo.nextSpringDate = springDate;
+							}
 						}
 					}
 				}
@@ -419,6 +421,7 @@
 				if(oneNow > nowMonth) {
 					finalLoop = true;
 					finalLastDays = thisOne;
+					lunarInfo.nextEndDay = d;
 					continue;
 				}
 				lastOne = thisOne;
@@ -435,6 +438,7 @@
 			lunarInfo.month = lastOne == '1900,1,1' ? 11: lunarMonth % 12;
 			lunarInfo.yearSky = sky%10;
 			lunarInfo.yearLand = land%12;
+			//console.log(lunarInfo);
 		}
 		
 		let displayLunar = (c, solarYm) => {
@@ -457,7 +461,14 @@
 				days -= lunarInfo.endDay;
 			}
 			
-			// 天干地支(年)
+			// 如果一個陽曆月有三個陰曆月時會用到
+			if(lunarInfo.startDay == lunarInfo.endDay && c == 30 && c != lunarInfo.nextEndDay) { // 31號，因為從0開始
+				days = 1;
+				month++; // 應該還要考慮下個月是不是潤月，但 1900~2100 沒有
+				if(month == 12) month = 0;
+			}
+			
+			// 天干地支
 			let tempSky = lunarInfo.yearSky;
 			let tempLand = lunarInfo.yearLand;
 			let sd = lunarInfo.nextSpringDate.split(',');
@@ -497,7 +508,6 @@
 			lunarInfo.month = 0; // 農曆月
 			lunarInfo.yearSky = 0; // 農曆年的天干
 			lunarInfo.yearLand = 0; // 農曆年的地支
-			lunarInfo.springDate = '1900,2,4'; // 1900 的陽曆立春日期
 			lunarInfo.nextSpringDate = ''; // 下一年的立春日期
 
 			lunarOperation();
