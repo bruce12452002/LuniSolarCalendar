@@ -356,6 +356,7 @@
 					let lastYmd;
 					if(!finalLoop) {
 						lastMonthDay = d - lastDays;
+						//if(![0,10,11].includes(lunarMonth % 12)) 
 						lunarMonth++;
 						lastYmd = lastOne.split(',');
 					} else {
@@ -363,7 +364,7 @@
 						lunarInfo.nextEndDay = d - lunarInfo.nextEndDay;
 					}
 					
-					if(lastYmd[1] != 1 && lastYmd[1] < 11) { // 1 11 12 不可能有閏月
+					if(![0,11].includes(lunarMonth % 12)) { // 1 12 不可能有閏月
 						for(let i=1; i<25; i=i+2) {
 							// 中氣的日期
 							let d = getSolarTerm24DaysOf1900(lastYmd[0], i);
@@ -438,7 +439,6 @@
 			lunarInfo.month = lastOne == '1900,1,1' ? 11: lunarMonth % 12;
 			lunarInfo.yearSky = sky%10;
 			lunarInfo.yearLand = land%12;
-			//console.log(lunarInfo);
 		}
 		
 		let displayLunar = (c, solarYm) => {
