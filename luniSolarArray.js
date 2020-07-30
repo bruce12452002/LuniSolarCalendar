@@ -1,6 +1,6 @@
-let y1901 = [	'60,0,B,11,0,1,6,21', '60,4,0,C,13,1,0,4,19', '71,0,1,11,0,1,6,21', '71,0,2,13,1,0,5,21',               
-				'71,0,3,13,0,0,6,22', '71,0,0,4,15,0,1,6,22', '71,0,5,16,1,0,8,23', '71,0,6,17,0,1,8,24',
-				'71,0,7,19,1,0,8,24', '71,0,0,8,19,0,1,9,24', '71,0,9,21,1,1,8,23', '71,0,A,21,1,1,8,22' ];
+let y1901 = [	'60,0,B,11,0,1,6,21', '60,0,C,13,1,0,4,19', '71,0,1,11,0,1,6,21', '71,0,2,13,1,0,5,21',               
+				'71,0,3,13,0,0,6,22', '71,0,4,15,0,1,6,22', '71,0,5,16,1,0,8,23', '71,0,6,17,0,1,8,24',
+				'71,0,7,19,1,0,8,24', '71,0,8,19,0,1,9,24', '71,0,9,21,1,1,8,23', '71,0,A,21,1,1,8,22' ];
 
 let y1902 = [	'71,0,B,22,1,0,6,21', '71,0,C,23,0,1,5,19', '82,0,1,22,1,0,6,21', '82,0,2,23,0,1,6,21',                 
 				'82,0,3,24,1,0,6,22', '82,0,4,25,0,0,7,22', '82,0,5,26,0,1,8,24', '82,0,6,28,1,0,8,24',                     
@@ -797,6 +797,8 @@ let y2099 = [	'46,0,C,11,1,1,5,20', '46,0,1,12,1,1,3,18', '57,0,2,10,1,0,5,20', 
 let y2100 = [	'57,0,B,21,0,1,5,20', '57,0,C,23,1,1,4,18', '68,0,1,21,1,1,5,20', '68,0,2,22,1,0,5,20',
 				'68,0,3,22,0,1,5,21', '68,0,4,24,1,0,5,21', '68,0,5,24,0,1,7,23', '68,0,6,26,1,0,7,23',
 				'68,0,7,27,0,1,7,23', '68,0,8,28,1,0,8,23', '68,0,9,29,0,0,7,22', '68,0,B,1,1,0,7,22' ];
+				
+let y2101 = [	'68,0,C,2,1,1,0,0' ];			
 
 let y = [	y1901, y1902, y1903, y1904, y1905, y1906, y1907, y1908, y1909, y1910,
 			y1911, y1912, y1913, y1914, y1915, y1916, y1917, y1918, y1919, y1920,
@@ -817,7 +819,8 @@ let y = [	y1901, y1902, y1903, y1904, y1905, y1906, y1907, y1908, y1909, y1910,
 			y2061, y2062, y2063, y2064, y2065, y2066, y2067, y2068, y2069, y2070,
 			y2071, y2072, y2073, y2074, y2075, y2076, y2077, y2078, y2079, y2080,
 			y2081, y2082, y2083, y2084, y2085, y2086, y2087, y2088, y2089, y2090,
-			y2091, y2092, y2093, y2094, y2095, y2096, y2097, y2098, y2099, y2100 ];
+			y2091, y2092, y2093, y2094, y2095, y2096, y2097, y2098, y2099, y2100,
+			y2101 ];
 
 let getLunarInfo = (solarArray) => {
 	const arr = solarArray.split(',');
@@ -867,7 +870,7 @@ let addDateFunction = () => {
 				else return leapMonth + Number(info.lunarMonth + 1);
 			}
 		}
-		
+
 		// 陽曆的上半個陰曆月
 		const endSolarDay = info.end - info.start + 1; // 陰曆月的最後一天對應陽曆的日期
 		if(this.getDate() <= endSolarDay) {
@@ -876,7 +879,11 @@ let addDateFunction = () => {
 		}
 		
 		// 陽曆的下半個陰曆月
-		const nextMonth = getLunarJson(this.getFullYear(), (this.getMonth() + 1) % 12);
+		let y = this.getFullYear();
+		let m = (this.getMonth() + 1) % 12;
+		if(m == 0) y += 1;
+
+		const nextMonth = getLunarJson(y, m);
 		if(nextMonth.isLeapMonth == 0) {
 			let rtn = info.lunarMonth + 1;
 			if(rtn == 13) rtn = 1;
@@ -906,9 +913,26 @@ let addDateFunction = () => {
 								'清明', '穀雨', '立夏', '小滿', '芒種', '夏至',
 								'小暑', '大暑', '立秋', '處暑', '白露', '秋分',
 								'寒露', '霜降', '立冬', '小雪', '大雪', '冬至'];
+
 		const info = getLunarJson(this.getFullYear(), this.getMonth());
 		if(info.term24Day1 == this.getDate()) return solarTerm24[this.getMonth() * 2];
 		if(info.term24Day2 == this.getDate()) return solarTerm24[this.getMonth() * 2 + 1];
 		return '';
+	};
+	
+	Date.prototype.getNewYearsEve = function() {
+		if(this.getFullYear() < 1901 || this.getFullYear() > 2100) return '';
+		if([0,1].includes(this.getMonth())) { // 除夕只會出現在陽曆的一月或二月
+			const info = getLunarJson(this.getFullYear(), this.getMonth());
+			if(info.lunarMonth == 11) {
+				return info.nextEnd
+			} else if(info.lunarMonth == 12) {
+				return info.end;
+			} else if(info.lunarMonth == 1) {
+				return getLunarJson(this.getFullYear(), this.getMonth() - 1).end;
+			}
+		} else {
+			return 0;
+		}
 	};
 }

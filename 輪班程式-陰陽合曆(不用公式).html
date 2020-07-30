@@ -69,14 +69,12 @@
 			} else if(monthHuman == 10 && m.getDate() == 31) { tr.insertCell().innerHTML = "蔣公誕辰紀念日";
 			} else if(monthHuman == 11 && m.getDate() == 12) { tr.insertCell().innerHTML = "國父誕辰紀念日";
 			} else if(monthHuman == 12 && m.getDate() == 25) { tr.insertCell().innerHTML = "行憲紀念日";
-			} else {
-				tr.insertCell();
 			}
-			//if(lunarFest) lunarFestival(tr);
-			//if(typeof(tr.cells[6]) == 'undefined') tr.insertCell();
+			if(lunarFest) lunarFestival(tr,m);
+			if(typeof(tr.cells[6]) == 'undefined') tr.insertCell();
 		}
 		
-		/*let lunarFestival = (tr) => {
+		let lunarFestival = (tr,m) => {
 			let lunarMdTxt = tr.children[1].innerHTML.split(' ')[1];
 			if(lunarMdTxt.indexOf('閏') == -1) {
 				let monthTxt = lunarMdTxt.indexOf('月');
@@ -90,7 +88,7 @@
 				if (monthNum == 7 && dayNum == 15) getContent(tr, '中元節');
 				if (monthNum == 8 && dayNum == 15) getContent(tr, '中秋節');
 				if (monthNum == 9 && dayNum == 9) getContent(tr, '重陽節');
-				if (monthNum == 12 && dayNum == lunarInfo.endDay) getContent(tr, '除夕');
+				if (monthNum == 12 && dayNum == m.getNewYearsEve()) getContent(tr, '除夕');
 			}
 		}
 		
@@ -101,7 +99,7 @@
 				if(tr.cells[6].innerHTML.length == 0) tr.cells[6].innerHTML += name;
 				else tr.cells[6].innerHTML += '；' + name;
 			}
-		}*/
+		}
 	
 		let lunarFest = true;
         function query() {
@@ -186,13 +184,18 @@
 					if(m.getFullYear() >= 1901 && m.getFullYear() <= 2100){
 						let lunar = tr.insertCell();
 						lunar.setAttribute('class', 'lunar');
-						//lunar.innerHTML = displayLunar(count, queryDateString);
+						let term24 = '';
+						if(m.getTerm24() != '') term24 = " (" + m.getTerm24() + ")";
+						lunar.innerHTML = m.getLunarYear() + "年 "
+													+ m.getLunarMonth() + "月"
+													+ m.getLunarDay() + "日"
+													+ term24;
 						lunarFest = true;
 						for(let d of ld) d.style.display = 'inline';
 					} else {
 						lunarFest = false;
 						for(let d of ld) d.style.display = 'none';
-						tr.insertCell().innerHTML = '只支援 1900~2032';
+						tr.insertCell().innerHTML = '只支援 1901~2100';
 					}
 					
 					let shiftNum = (aShiftNum + count) % shift.length;
@@ -224,7 +227,7 @@
 			document.getElementById("tab").appendChild(table);
 			changeColor();
 			hideShift();
-			//lunarDisplayFormat();
+			lunarDisplayFormat();
 		}
 		
 		function addSpace(num) {
@@ -298,7 +301,10 @@
 			}
 		}
 		
-		/*let displayChinese = (tds) => {
+		const lunarDayNum = ['初', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '廿', '卅'];
+		const lunarMonthNum = ['正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '冬', '臘'];
+		
+		let displayChinese = (tds) => {
 			for(let td of tds) {
 				let lunarYmd = splitLunarYmd(td);
 				let month = lunarMonthNum[Number(lunarYmd.monthNum) - 1];
@@ -359,7 +365,7 @@
 			let monthNum = lunarMdTxt.substring(0, monthTxt);
 			let days = lunarMdTxt.substring(Number(monthTxt) + 1, lunarMdTxt.indexOf('日'));
 			return {'allTxt':allTxt, 'leaf':leaf, 'monthNum':monthNum, 'days':days};
-		}*/
+		}
     </script>
 </head>
 <body>
