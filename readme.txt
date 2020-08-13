@@ -50,6 +50,7 @@
 但只有 1900~2100 比較準(其實還是有誤差，因為進位問題而有可能導致差一天，尤其是閏月，差一天就是一個月，2033(含)之後有問題)
 10.這裡指的農曆是中國農曆，外蒙古不是這種算法，他們有時陰曆日期兩天一模一樣，叫重日
 11.還得考慮 UTC 的問題，越南是 UTC+7，但大部分有用農曆的都是 UTC8，所以有時候會產生節日差一天的問題
+但公式並沒有提供什麼時間應該加或減，所以參考就好
 
 公式一：
 // 查24節氣在1900年1月0日後的第幾天
@@ -113,3 +114,10 @@ https://www.hko.gov.hk/tc/gts/time/conversion.htm
 
 看網上的資料，只有找到以陰曆為主的，但生活中農曆大部分都是陽曆的附加物，所以我只好自己想一個了
 寫在「luniSolarArray.js」裡，getLunarInfo 方法有解釋
+
+
+
+
+由於手機不能用，所以我上傳到 Google 雲端硬碟，並根據
+http://blog.e-happy.com.tw/%E7%B6%B2%E7%AB%99%E6%9E%B6%E8%A8%AD-%E6%89%8B%E6%8A%8A%E6%89%8B%E6%95%99%E4%BD%A0%E6%8A%8A%E7%B6%B2%E7%AB%99%E6%9E%B6%E8%A8%AD%E5%88%B0-google-drive-%E9%9B%B2%E7%AB%AF%E7%A9%BA%E9%96%93%E4%B8%8A/
+的教學，連到 https://duiuch5hs0aum7krqzomag-on.drv.tw/LuniSolarCalendar/ 就可以看到了
