@@ -40,9 +40,9 @@
 	
 	<script src="luniSolarArray.js"></script>
     <script>
+		let date = new Date();
 		window.onload = _ => {
 			addDateFunction(); // 擴充原本的 Date 功能
-			let date = new Date();
 			let m = date.getMonth() + 1;
 			if(m < 10) m = '0' + m;
 			
@@ -271,6 +271,8 @@
 					trs[i].style.backgroundColor = "lightgreen";
 				}
 				trs[i].onmouseover = function() {
+					if ((date.getDate() & 1) == 0) trs[date.getDate()].style.backgroundColor = 'lightblue';
+					else trs[date.getDate()].style.backgroundColor = 'lightgreen';
 					this.style.backgroundColor = 'rgb(128,128,0)';
 				};
 				trs[i].onmouseout = function() {
@@ -278,6 +280,12 @@
 					else this.style.backgroundColor = 'lightgreen';
 				};
             }
+			
+			// 將今天日期反白
+			let queryDateString = document.getElementsByName("queryDateString")[0].value.split("-");
+			if(date.getFullYear() == queryDateString[0] && date.getMonth() + 1 == Number(queryDateString[1])){
+				trs[date.getDate()].style.backgroundColor = 'rgb(128,128,0)';
+			}
 		}
 		
 		let start = _ => {
