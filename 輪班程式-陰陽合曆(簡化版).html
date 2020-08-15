@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>輪班程式-陰陽合曆</title>
+	
+	<style>
+		td {
+			font-size: 25px;
+			text-align: center;
+			vertical-align: middle;
+		}
+		
+		.holiday {
+			color: red;
+		}
+		
+		.header {
+			font-weight: bold;
+			font-size: 30px;
+		}
+		
+		select, input {
+			width: 140px;
+			height:50px;
+			font-size: 30px;
+		}
+		
+		span {
+			font-size: 30px;
+		}
+		
+		input[type='checkbox'] {
+			width: 30px;
+			height:20px;
+			font-size: 30px;
+			margin: 0px;
+		}
+		
+		span#sharePerson {
+			color: red;
+		}
+		
+		div{
+			overflow:scroll;
+			height:600px;
+		}
+		
+		th {
+			position:sticky;
+			top:0px;
+			background-color:lightyellow;
+		}
+	</style>
+	
+	<script src="luniSolarArray.js"></script>
+    <script>
+		let date = new Date();
+		window.onload = _ => {
+			addDateFunction(); // 擴充原本的 Date 功能
+			let m = date.getMonth() + 1;
+			if(m < 10) m = '0' + m;
+			
+			let dateString = date.getFullYear() + "-" + m;
+			document.getElementsByName("queryDateString")[0].value = dateString;
+			start();
+		}
+
+		let solarFestival = (monthHuman, m, tr) => {
+			if (monthHuman == 1 && m.getDate() == 1) { tr.insertCell().innerHTML = "開國紀念日";
+			} else if(monthHuman == 2 && m.getDate() == 28) { tr.insertCell().innerHTML = "和平紀念日";
+			} else if(monthHuman == 3 && m.getDate() == 29) { tr.insertCell().innerHTML = "青年節";
+			} else if(monthHuman == 4 && m.getDate() == 4) { tr.insertCell().innerHTML = "婦幼節";
+			} else if(monthHuman == 4 && m.getDate() == 5) { tr.insertCell().innerHTML = "掃墓節";
+			} else if(monthHuman == 5 && m.getDate() == 1) { tr.insertCell().innerHTML = "勞動節";
+			} else if(monthHuman == 5 && m.getDay() == 0) {
+				if(m.getDate() >=8 && m.getDate() <= 14 ) tr.insertCell().innerHTML = "母親節";
+				else tr.insertCell();
+			} else if(monthHuman == 8 && m.getDate() == 8) { tr.insertCell().innerHTML = "父親節";
+			} else if(monthHuman == 9 && m.getDate() == 3) { tr.insertCell().innerHTML = "軍人節";
+			} else if(monthHuman == 9 && m.getDate() == 28) { tr.insertCell().innerHTML = "教師節";
+			} else if(monthHuman == 10 && m.getDate() == 10) { tr.insertCell().innerHTML = "國慶日";
+			} else if(monthHuman == 10 && m.getDate() == 25) { tr.insertCell().innerHTML = "光復節";
+			} else if(monthHuman == 10 && m.getDate() == 31) { tr.insertCell().innerHTML = "蔣公誕辰紀念日";
+			} else if(monthHuman == 11 && m.getDate() == 12) { tr.insertCell().innerHTML = "國父誕辰紀念日";
+			} else if(monthHuman == 12 && m.getDate() == 25) { tr.insertCell().innerHTML = "行憲紀念日";
+			}
+			if(lunarFest) lunarFestival(tr,m);
+			if(typeof(tr.cells[6]) == 'undefined') tr.insertCell();
+		}
+		
+		let lunarFestival = (tr,m) => {
+			let lunarMdTxt = tr.children[1].innerHTML.split(' ')[1];
+			if(lunarMdTxt.indexOf('閏') == -1) {
+				let monthTxt = lunarMdTxt.indexOf('月');
+				let monthNum = lunarMdTxt.substring(0, monthTxt);
+				let dayNum = lunarMdTxt.substring(Number(monthTxt) + 1, lunarMdTxt.indexOf('日'));
+
+				if (monthNum == 1 && dayNum == 1) getContent(tr, '農曆新年');
+				if (monthNum == 1 && dayNum == 15) getContent(tr, '元宵節');
+				if (monthNum == 5 && dayNum == 5) getContent(tr, '端午節');
+				if (monthNum == 7 && dayNum == 7) getContent(tr, '七夕');
+				if (monthNum == 7 && dayNum == 15) getContent(tr, '中元節');
+				if (monthNum == 8 && dayNum == 15) getContent(tr, '中秋節');
+				if (monthNum == 9 && dayNum == 9) getContent(tr, '重陽節');
+				if (monthNum == 12 && dayNum == m.getNewYearsEve()) getContent(tr, '除夕');
+			}
+		}
+		
+		let getContent = (tr, name) => {
+			if(typeof(tr.cells[6]) == 'undefined') {
+				tr.insertCell().innerHTML = name;
+			} else {
+				if(tr.cells[6].innerHTML.length == 0) tr.cells[6].innerHTML += name;
+				else tr.cells[6].innerHTML += '；' + name;
+			}
+		}
+		
+		let getTh = _ => {
+			return document.createElement("th");
+		}
+	
+		let lunarFest = true;
+        function query() {
+            const compareDate = new Date(2019, 11 - 1, 10); // 基於此日期判斷，月為 0-11
+			const shift = "3,3,3,0,2,2,2,1,1,1,0,0".split(",");
+
+			let queryDateString = document.getElementsByName("queryDateString")[0].value.split("-");
+			let queryDateMonth = new Date(queryDateString[0], Number(queryDateString[1]) - 1, 1);
+			const day = 86400000; // 一天
+            let days = Math.round((queryDateMonth - compareDate) / day); // 相差天數
+			let month = queryDateMonth.getMonth();
+			
+			// A班1號的班
+			let aShiftNum = days % shift.length;
+			let count = 0;
+			
+			let shiftTable = document.getElementById("shiftTable");
+			if(shiftTable != null) {
+				document.getElementById("tab").removeChild(shiftTable);
+			}
+			
+			const table = document.createElement("table");
+			table.setAttribute('border', '1');
+			table.setAttribute('width', '100%');
+			table.setAttribute('id', 'shiftTable');
+			table.setAttribute('border-spacing', '0px');
+			
+			
+			let tr = table.insertRow();
+			tr.setAttribute('id', 'thHeader');
+			let solarCalendar = getTh();
+			solarCalendar.setAttribute('width', '250px');
+			solarCalendar.setAttribute('class', 'header');
+			solarCalendar.innerHTML = "陽曆日期";
+			tr.appendChild(solarCalendar);
+			
+			let luniSolarCalendar = getTh();
+			luniSolarCalendar.setAttribute('width', '300px');
+			luniSolarCalendar.setAttribute('class', 'header lunarDate');
+			luniSolarCalendar.innerHTML = "農曆日期";
+			tr.appendChild(luniSolarCalendar);
+			
+			let a = getTh();
+			a.setAttribute('class', 'header shift');
+			a.setAttribute('width', '110px');
+			a.innerHTML = "A";
+			tr.appendChild(a);
+			
+			let b = getTh();
+			b.setAttribute('class', 'header shift');
+			b.setAttribute('width', '110px');
+			b.innerHTML = "B";
+			tr.appendChild(b);
+			
+			let c = getTh();
+			c.setAttribute('class', 'header shift');
+			c.setAttribute('width', '110px');
+			c.innerHTML = "C";
+			tr.appendChild(c);
+			
+			let d = getTh();
+			d.setAttribute('class', 'header shift');
+			d.setAttribute('width', '110px');
+			d.innerHTML = "D";
+			tr.appendChild(d);
+			
+			let e = getTh();
+			e.setAttribute('class', 'header');
+			e.setAttribute('width', '250px');
+			e.innerHTML = "節日";
+			tr.appendChild(e);
+			
+			while (true) {
+				let m = new Date(Number(queryDateMonth) + day * count)
+				if (month == m.getMonth()) {
+					let monthHuman = (Number(month) + 1);
+					let solarYmdw = m.getFullYear() + "年" + monthHuman + "月" + addSpace(m.getDate()) + "日(" + getWeek(m.getDay()) + ")";
+					let tr = table.insertRow();
+					if (m.getDay() == 0 || m.getDay() == 6) {
+						tr.setAttribute('class', 'holiday');
+					}
+					
+					tr.insertCell().innerHTML = solarYmdw;
+					let ld = document.querySelectorAll('.lunarDisplay');
+					if(m.getFullYear() >= 1901 && m.getFullYear() <= 2100){
+						let lunar = tr.insertCell();
+						lunar.setAttribute('class', 'lunarDate');
+						let term24 = '';
+						if(m.getTerm24() != '') term24 = " (" + m.getTerm24() + ")";
+						lunar.innerHTML = m.getLunarYear() + "年 "
+													+ m.getLunarMonth() + "月"
+													+ m.getLunarDay() + "日"
+													+ term24;
+						lunarFest = true;
+						for(let d of ld) d.style.display = 'inline';
+					} else {
+						lunarFest = false;
+						for(let d of ld) d.style.display = 'none';
+						let lunar = tr.insertCell();
+						lunar.setAttribute('class', 'lunar');
+						lunar.innerHTML = '只支援 1901~2100';
+					}
+					
+					let shiftNum = (aShiftNum + count) % shift.length;
+					let aCell = tr.insertCell();
+					aCell.setAttribute('class', 'shift');
+					aCell.innerHTML = (shiftNum >= 0 ? shift[shiftNum] : shift[shiftNum + shift.length]);
+
+					let bShiftNum = (aShiftNum - 6 + count) % shift.length;
+					let bCell = tr.insertCell();
+					bCell.setAttribute('class', 'shift');
+					bCell.innerHTML = (bShiftNum >= 0 ? shift[bShiftNum] : shift[bShiftNum + shift.length]);
+					
+					let cShiftNum = (aShiftNum - 9 + count) % shift.length;
+					let cCell = tr.insertCell();
+					cCell.setAttribute('class', 'shift');
+					cCell.innerHTML = (cShiftNum >= 0 ? shift[cShiftNum] : shift[cShiftNum + shift.length]);
+					
+					let dShiftNum = (aShiftNum - 3 + count) % shift.length;
+					let dCell = tr.insertCell();
+					dCell.setAttribute('class', 'shift');
+					dCell.innerHTML = (dShiftNum >= 0 ? shift[dShiftNum] : shift[dShiftNum + shift.length]);
+					
+					solarFestival(monthHuman, m, tr);
+					count = count + 1;
+				} else {
+					break;
+				}
+			}
+			document.getElementById("tab").appendChild(table);
+			changeColor();
+			hideShift();
+			hideLunarCalendar();
+		}
+		
+		function addSpace(num) {
+			return num.toString().length == 1 ? "0" + num : num; 
+		}
+		
+		
+		function getWeek(day){
+			const dayArray= ["日", "一", "二", "三", "四", "五", "六"];
+			return dayArray[day];
+		}
+		
+		function page(num) {
+			let queryDateString = document.getElementsByName("queryDateString")[0].value.split("-");
+			if (queryDateString != "") {
+				let result = "";
+				let month = addSpace(Number(queryDateString[1]) + num);
+				if (month == 13) {
+					result = Number(queryDateString[0]) + 1 + "-01"
+				}
+				
+				if (month == 0) {
+					result = Number(queryDateString[0]) - 1 + "-12"
+				}
+				
+				if (result == "") {
+					result = queryDateString[0] + "-" + month;
+				}
+				document.getElementsByName("queryDateString")[0].value = result;
+				start();
+			}
+		}
+		
+		function changeColor() {
+			let trs = document.getElementsByTagName("tr");
+			//trs[0].style.backgroundColor = "lightyellow";
+            for (let i=1; i < trs.length; i++) {
+                if ((i & 1) == 0) {
+                    trs[i].style.backgroundColor = "lightblue";
+                } else {
+					trs[i].style.backgroundColor = "lightgreen";
+				}
+				trs[i].onmouseover = function() {
+					if ((date.getDate() & 1) == 0) trs[date.getDate()].style.backgroundColor = 'lightblue';
+					else trs[date.getDate()].style.backgroundColor = 'lightgreen';
+					this.style.backgroundColor = 'rgb(128,128,0)';
+				};
+				trs[i].onmouseout = function() {
+					if ((i & 1) == 0) this.style.backgroundColor = 'lightblue';
+					else this.style.backgroundColor = 'lightgreen';
+				};
+            }
+			
+			// 將今天日期反白
+			let queryDateString = document.getElementsByName("queryDateString")[0].value.split("-");
+			if(date.getFullYear() == queryDateString[0] && date.getMonth() + 1 == Number(queryDateString[1])){
+				trs[date.getDate()].style.backgroundColor = 'rgb(128,128,0)';
+			}
+		}
+		
+		let start = _ => {
+			let content = document.getElementsByName('queryDateString')[0].value;
+			if(content.indexOf('-') == -1 && (content.length != 6 || content.length != 7)) {
+				alert('請輸入正確格式(yyyy-MM)');
+				return;
+			}
+			query();
+		}
+		
+		let hideShift = _ => {
+			let shifts = document.querySelectorAll('.shift');
+			if(document.getElementById('hideShift').checked){
+				for(let s of shifts) s.style.display = 'none';
+			} else {
+				for(let s of shifts) s.style.display = 'table-cell';
+			}
+		}
+		
+		const lunarDayNum = ['初', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '廿', '卅'];
+		const lunarMonthNum = ['正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '冬', '臘'];
+		
+		let hideLunarCalendar = () => {
+			const ld = document.querySelectorAll('.lunarDate');
+			if(document.getElementById('hideLunarCalendar').checked){
+				for(let s of ld) s.style.display = 'none';
+			} else {
+				for(let s of ld) s.style.display = 'table-cell';
+			}
+		}
+    </script>
+</head>
+<body>
+<span>此程式由<span id="sharePerson">陳委信</span>先生分享</span><br />
+<input name="queryDateString" size="10" placeholder="yyyy-MM" maxlength="7" onchange="start();"/>
+<input type="button" value="--" onclick="page(-1)"/>
+<input type="button" value="++" onclick="page(1)"/>
+
+<span>&nbsp;&nbsp;</span>
+<input class="lunarDisplay" type="checkbox" id="hideLunarCalendar" onclick="hideLunarCalendar()" checked='checked' />
+<span class="lunarDisplay">隱藏農曆</span>
+
+<span>&nbsp;&nbsp;</span>
+<input type="checkbox" id="hideShift" onclick="hideShift()" />
+<span>隱藏班表</span>
+<div>
+	<dir id="tab"></dir>
+</div>
+</body>
+</html>

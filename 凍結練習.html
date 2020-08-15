@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	
+	<style>
+		div{
+			overflow:auto;
+			width:300px;
+			height:300px;
+		}
+		
+		table {
+			table-layout: fixed;
+			width: 500px;
+		}
+		
+		tr th {
+			position:sticky;
+			top:0px;
+		}
+		
+		td:first-child, th:first-child {<!-- 左右移動時，凍結最左邊，不知為什麼，這個註解要拿掉才可以成功 -->
+			position:sticky; 
+			left:0;
+			z-index:1;
+			background-color:lightpink;
+		}
+		
+		th:first-child {<!-- 上下移動時，th在最上面 -->
+			z-index:2;
+			background-color:lightblue;
+		}
+	</style>
+</head>
+<body>
+<span>dd1</span>
+<span>dd2</span>
+
+<div>
+<table border="1">
+	<tr><th>aaa</th><th>bbb</th><th>ccc</th><th>aaa</th><th>bbb</th><th>ccc</th></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>cd1</td><td>cd2</td><td>cd3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>cd1</td><td>cd2</td><td>cd3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>cd1</td><td>cd2</td><td>cd3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>cd1</td><td>cd2</td><td>cd3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>cd1</td><td>cd2</td><td>cd3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>cd1</td><td>cd2</td><td>cd3</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>111</td><td>222</td><td>333</td><td>111</td><td>222</td><td>333</td></tr>
+	<tr><td>ab1</td><td>ab2</td><td>ab3</td><td>111</td><td>222</td><td>333</td></tr>
+</table>
+</div>
+</body>
+</html>

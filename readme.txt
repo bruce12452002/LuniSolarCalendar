@@ -119,5 +119,5 @@ https://www.hko.gov.hk/tc/gts/time/conversion.htm
 
 
 由於手機不能用，所以我上傳到 Google 雲端硬碟，並根據
-http://blog.e-happy.com.tw/%E7%B6%B2%E7%AB%99%E6%9E%B6%E8%A8%AD-%E6%89%8B%E6%8A%8A%E6%89%8B%E6%95%99%E4%BD%A0%E6%8A%8A%E7%B6%B2%E7%AB%99%E6%9E%B6%E8%A8%AD%E5%88%B0-google-drive-%E9%9B%B2%E7%AB%AF%E7%A9%BA%E9%96%93%E4%B8%8A/
-的教學，連到 https://duiuch5hs0aum7krqzomag-on.drv.tw/LuniSolarCalendar/ 就可以看到了
+http://blog.e-happy.com.tw/網站架設-手把手教你把網站架設到-google-drive-雲端空間上/
+的教學，連到 https://duiuch5hs0aum7krqzomag-on.drv.tw/shiftTable/ 就可以看到了
