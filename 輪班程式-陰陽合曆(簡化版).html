@@ -11,6 +11,19 @@
 			vertical-align: middle;
 		}
 		
+		.festival {
+			font-size: 25px;
+			text-align: left;
+			vertical-align: middle;
+		}
+		
+		.festival_header {
+			font-weight: bold;
+			font-size: 30px;
+			text-align: left;
+			vertical-align: middle;
+		}
+		
 		.holiday {
 			color: red;
 		}
@@ -43,7 +56,7 @@
 		
 		div{
 			overflow:scroll;
-			height:600px;
+			height:85em;
 		}
 		
 		th {
@@ -67,25 +80,25 @@
 		}
 
 		let solarFestival = (monthHuman, m, tr) => {
-			if (monthHuman == 1 && m.getDate() == 1) { tr.insertCell().innerHTML = "開國紀念日";
-			} else if(monthHuman == 2 && m.getDate() == 28) { tr.insertCell().innerHTML = "和平紀念日";
-			} else if(monthHuman == 3 && m.getDate() == 29) { tr.insertCell().innerHTML = "青年節";
-			} else if(monthHuman == 4 && m.getDate() == 4) { tr.insertCell().innerHTML = "婦幼節";
-			} else if(monthHuman == 4 && m.getDate() == 5) { tr.insertCell().innerHTML = "掃墓節";
-			} else if(monthHuman == 5 && m.getDate() == 1) { tr.insertCell().innerHTML = "勞動節";
+			if (monthHuman == 1 && m.getDate() == 1) { getTd(tr, "開國紀念日");
+			} else if(monthHuman == 2 && m.getDate() == 28) { getTd(tr, "和平紀念日");
+			} else if(monthHuman == 3 && m.getDate() == 29) { getTd(tr, "青年節");
+			} else if(monthHuman == 4 && m.getDate() == 4) { getTd(tr, "婦幼節");
+			} else if(monthHuman == 4 && m.getDate() == 5) { getTd(tr, "掃墓節");
+			} else if(monthHuman == 5 && m.getDate() == 1) { getTd(tr, "勞動節");
 			} else if(monthHuman == 5 && m.getDay() == 0) {
-				if(m.getDate() >=8 && m.getDate() <= 14 ) tr.insertCell().innerHTML = "母親節";
+				if(m.getDate() >=8 && m.getDate() <= 14 ) getTd(tr, "母親節");
 				else tr.insertCell();
-			} else if(monthHuman == 8 && m.getDate() == 8) { tr.insertCell().innerHTML = "父親節";
-			} else if(monthHuman == 9 && m.getDate() == 3) { tr.insertCell().innerHTML = "軍人節";
-			} else if(monthHuman == 9 && m.getDate() == 28) { tr.insertCell().innerHTML = "教師節";
-			} else if(monthHuman == 10 && m.getDate() == 10) { tr.insertCell().innerHTML = "國慶日";
-			} else if(monthHuman == 10 && m.getDate() == 25) { tr.insertCell().innerHTML = "光復節";
-			} else if(monthHuman == 10 && m.getDate() == 31) { tr.insertCell().innerHTML = "蔣公誕辰紀念日";
-			} else if(monthHuman == 11 && m.getDate() == 12) { tr.insertCell().innerHTML = "國父誕辰紀念日";
-			} else if(monthHuman == 12 && m.getDate() == 25) { tr.insertCell().innerHTML = "行憲紀念日";
+			} else if(monthHuman == 8 && m.getDate() == 8) { getTd(tr, "父親節");
+			} else if(monthHuman == 9 && m.getDate() == 3) { getTd(tr, "軍人節");
+			} else if(monthHuman == 9 && m.getDate() == 28) { getTd(tr, "教師節");
+			} else if(monthHuman == 10 && m.getDate() == 10) { getTd(tr, "國慶日");
+			} else if(monthHuman == 10 && m.getDate() == 25) { getTd(tr, "光復節");
+			} else if(monthHuman == 10 && m.getDate() == 31) { getTd(tr, "蔣公誕辰紀念日");
+			} else if(monthHuman == 11 && m.getDate() == 12) { getTd(tr, "國父誕辰紀念日");
+			} else if(monthHuman == 12 && m.getDate() == 25) { getTd(tr, "行憲紀念日");
 			}
-			if(lunarFest) lunarFestival(tr,m);
+			if(lunarFest) lunarFestival(tr, m);
 			if(typeof(tr.cells[6]) == 'undefined') tr.insertCell();
 		}
 		
@@ -109,11 +122,18 @@
 		
 		let getContent = (tr, name) => {
 			if(typeof(tr.cells[6]) == 'undefined') {
-				tr.insertCell().innerHTML = name;
+				getTd(tr, name);
 			} else {
 				if(tr.cells[6].innerHTML.length == 0) tr.cells[6].innerHTML += name;
 				else tr.cells[6].innerHTML += '；' + name;
 			}
+		}
+		
+		let getTd = (tr, name) => {
+			const td = tr.insertCell();
+			td.setAttribute('class', 'festival');
+			td.innerHTML = name;
+			return td;
 		}
 		
 		let getTh = _ => {
@@ -142,7 +162,7 @@
 			
 			const table = document.createElement("table");
 			table.setAttribute('border', '1');
-			table.setAttribute('width', '100%');
+			table.setAttribute('width', '80%');
 			table.setAttribute('id', 'shiftTable');
 			table.setAttribute('border-spacing', '0px');
 			
@@ -150,44 +170,43 @@
 			let tr = table.insertRow();
 			tr.setAttribute('id', 'thHeader');
 			let solarCalendar = getTh();
-			solarCalendar.setAttribute('width', '250px');
+			solarCalendar.setAttribute('width', '100px');
 			solarCalendar.setAttribute('class', 'header');
-			solarCalendar.innerHTML = "陽曆日期";
+			solarCalendar.innerHTML = "陽曆";
 			tr.appendChild(solarCalendar);
 			
 			let luniSolarCalendar = getTh();
-			luniSolarCalendar.setAttribute('width', '300px');
+			luniSolarCalendar.setAttribute('width', '250px');
 			luniSolarCalendar.setAttribute('class', 'header lunarDate');
-			luniSolarCalendar.innerHTML = "農曆日期";
+			luniSolarCalendar.innerHTML = "農曆";
 			tr.appendChild(luniSolarCalendar);
 			
 			let a = getTh();
 			a.setAttribute('class', 'header shift');
-			a.setAttribute('width', '110px');
+			a.setAttribute('width', '50px');
 			a.innerHTML = "A";
 			tr.appendChild(a);
 			
 			let b = getTh();
 			b.setAttribute('class', 'header shift');
-			b.setAttribute('width', '110px');
+			b.setAttribute('width', '50px');
 			b.innerHTML = "B";
 			tr.appendChild(b);
 			
 			let c = getTh();
 			c.setAttribute('class', 'header shift');
-			c.setAttribute('width', '110px');
+			c.setAttribute('width', '50px');
 			c.innerHTML = "C";
 			tr.appendChild(c);
 			
 			let d = getTh();
 			d.setAttribute('class', 'header shift');
-			d.setAttribute('width', '110px');
+			d.setAttribute('width', '50px');
 			d.innerHTML = "D";
 			tr.appendChild(d);
 			
 			let e = getTh();
-			e.setAttribute('class', 'header');
-			e.setAttribute('width', '250px');
+			e.setAttribute('class', 'festival_header');
 			e.innerHTML = "節日";
 			tr.appendChild(e);
 			
@@ -195,13 +214,12 @@
 				let m = new Date(Number(queryDateMonth) + day * count)
 				if (month == m.getMonth()) {
 					let monthHuman = (Number(month) + 1);
-					let solarYmdw = m.getFullYear() + "年" + monthHuman + "月" + addSpace(m.getDate()) + "日(" + getWeek(m.getDay()) + ")";
 					let tr = table.insertRow();
 					if (m.getDay() == 0 || m.getDay() == 6) {
 						tr.setAttribute('class', 'holiday');
 					}
 					
-					tr.insertCell().innerHTML = solarYmdw;
+					tr.insertCell().innerHTML = m.getDate() + "號(" + getWeek(m.getDay()) + ")";
 					let ld = document.querySelectorAll('.lunarDisplay');
 					if(m.getFullYear() >= 1901 && m.getFullYear() <= 2100){
 						let lunar = tr.insertCell();
@@ -287,7 +305,6 @@
 		
 		function changeColor() {
 			let trs = document.getElementsByTagName("tr");
-			//trs[0].style.backgroundColor = "lightyellow";
             for (let i=1; i < trs.length; i++) {
                 if ((i & 1) == 0) {
                     trs[i].style.backgroundColor = "lightblue";
@@ -344,12 +361,13 @@
     </script>
 </head>
 <body>
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span>此程式由<span id="sharePerson">陳委信</span>先生分享</span><br />
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <input name="queryDateString" size="10" placeholder="yyyy-MM" maxlength="7" onchange="start();"/>
 <input type="button" value="--" onclick="page(-1)"/>
-<input type="button" value="++" onclick="page(1)"/>
-
-<span>&nbsp;&nbsp;</span>
+<input type="button" value="++" onclick="page(1)"/><br />
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <input class="lunarDisplay" type="checkbox" id="hideLunarCalendar" onclick="hideLunarCalendar()" checked='checked' />
 <span class="lunarDisplay">隱藏農曆</span>
 

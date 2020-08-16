@@ -20,14 +20,14 @@
 			top:0px;
 		}
 		
-		td:first-child, th:first-child {<!-- 左右移動時，凍結最左邊，不知為什麼，這個註解要拿掉才可以成功 -->
+		td:first-child, th:first-child { /* 左右移動時，凍結最左邊 */
 			position:sticky; 
 			left:0;
 			z-index:1;
 			background-color:lightpink;
 		}
 		
-		th:first-child {<!-- 上下移動時，th在最上面 -->
+		th:first-child { /* 上下移動時，th在最上面 */
 			z-index:2;
 			background-color:lightblue;
 		}
